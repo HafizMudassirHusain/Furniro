@@ -1,0 +1,149 @@
+.heroTextbox,.parents{
+    background-color: antiquewhite;
+}
+
+.heroTextbox h1{
+   color: rgb(191, 155, 14);
+}
+.heroTextbox button, .content button{
+    background-color: rgb(191, 155, 14);
+}
+/* ================Sliders=============== */
+
+
+.slider-container {
+    position: relative;
+    width: 60%;
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  
+  .slider {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    transform: translateX(calc(-70% * var(--current-slide)));
+  }
+  
+  .slide {
+    min-width: 70%;
+    opacity: 0.5;
+    transition: opacity 0.5s ease;
+    display: flex;
+    gap: 0px;
+    justify-content: space-around;
+    align-items: center;
+  }
+  
+  .slide.active {
+    opacity: 1;
+  }
+  .slide.active .card{
+    height: 50vh;
+    transition: transform 2.5s ease-in-out;
+  
+  }
+  
+  .card {
+    background-color: white;
+    height: 40vh;
+    width: 25vw;
+    /* padding: 0px; */
+    /* border-radius: 10px; */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+  
+  .card-image {
+    height: 100%;
+    width: 100%;
+    /* height: 330px; */
+    object-fit: cover;
+    /* border-radius: 10px; */
+  }
+  .card-content{
+    margin: auto;
+    position: relative;
+    bottom: 100px;
+    z-index: 1;
+    border-radius: 10px;
+    background-color: rgba(236, 239, 238, 0.811);
+    width: 60%;
+  }
+  .card-title {
+    font-size: 24px;
+    margin: 10px 0;
+  }
+  
+  .card-description {
+    font-size: 16px;
+  }
+  
+  .prev-btn ,
+  .next-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.845);
+    color: rgb(66, 64, 64);
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 24px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgb(191, 189, 189);
+  }
+  
+  .prev-btn {
+    left: 10px;
+  }
+  
+  .next-btn {
+    right: 10px;
+  }
+  
+  /* ============================Gallery================== */
+/* Container for the entire gallery */
+.gallery-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-gap: 10px;
+  padding: 20px;
+}
+
+/* Gallery item styling */
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+  /* border-radius: 10px; */
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: scale(1.05);
+}
+
+/* Styling for the images */
+/* .gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+} */
+
+/* Optional image title overlay */
+.image-title {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  color: white;
+  font-size: 18px;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+}
+
+
+
+
+
+
+

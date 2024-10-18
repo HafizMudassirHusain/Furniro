@@ -1,0 +1,2 @@
+step first intallatin of libaries:
+tailwindCSS , react-Router, firebace , antDesign
