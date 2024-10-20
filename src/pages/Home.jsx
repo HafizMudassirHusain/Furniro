@@ -53,6 +53,7 @@ useEffect(()=>{
 
 <Carousels />
 
+
 <ImageGallery />
       </div>
     )

@@ -10,7 +10,7 @@ export default function Banner({ backColor }) {
         <div>
           <TrophyOutlined className="text-4xl md:text-6xl mr-3" />
         </div>
-        <div>
+        <div className="w-50">
           <h1 className="text-xl md:text-2xl font-bold">High Quality</h1>
           <p className="text-sm md:text-base">crafted from top materials</p>
         </div>
@@ -20,7 +20,7 @@ export default function Banner({ backColor }) {
         <div>
           <CheckCircleOutlined className="text-4xl md:text-6xl mr-3" />
         </div>
-        <div>
+        <div  className="w-50">
           <h1 className="text-xl md:text-2xl font-bold">Warranty Protection</h1>
           <p className="text-sm md:text-base">Over 2 years</p>
         </div>
@@ -30,7 +30,7 @@ export default function Banner({ backColor }) {
         <div>
           <GiftOutlined className="text-4xl md:text-6xl mr-3" />
         </div>
-        <div>
+        <div  className="w-50">
           <h1 className="text-xl md:text-2xl font-bold">Free Shipping</h1>
           <p className="text-sm md:text-base">Orders over $150</p>
         </div>
@@ -40,7 +40,7 @@ export default function Banner({ backColor }) {
         <div>
           <PhoneOutlined className="text-4xl md:text-6xl mr-3" />
         </div>
-        <div>
+        <div  className="w-50">
           <h1 className="text-xl md:text-2xl font-bold">24/7 Support</h1>
           <p className="text-sm md:text-base">Dedicated support</p>
         </div>

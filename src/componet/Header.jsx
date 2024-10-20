@@ -90,7 +90,7 @@ export default function Header() {
               <Link to={'/'} className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Home</Link>
               <Link to={'/products'} className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Products</Link>
               <Link to={'/orders'} className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Orders</Link>
-              <Link to={"/checkout"} className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Checkout</Link>
+              <Link to={"/contact"} className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Contact</Link>
             </div>
           </div>
 
@@ -163,7 +163,7 @@ export default function Header() {
             <Link to={'/'} className="text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">Home</Link>
             <Link to={'/products'} className="text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">Products</Link>
             <Link to={'/orders'} className="text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">Orders</Link>
-            <Link to={"/checkout"} className="text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">Checkout</Link>
+            <Link to={"/contact"} className="text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">Contact</Link>
           </div>
           <div className="px-4 py-3">
             {!user ? (

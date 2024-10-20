@@ -12,6 +12,8 @@ import Checkout from './pages/Checkout';
 import { FirebaseProvider } from './context/FirebaseContext';
 import OrderDetails from './pages/OrderDetails';
 import Login from './pages/Auth/Login';
+import Contact from './componet/ContactUs/Contact';
+import Admin from './pages/admin';
 
 function App() {
   return (
@@ -21,18 +23,21 @@ function App() {
 <Route path='/auth'>
 <Route path='/auth' element={<Auth />}/>
 <Route path='login' element={<Login />}/>
-<Route path='signup' element={<SignUp />}/>    
+<Route path='signup' element={<SignUp />}/> 
+<Route path='admin' element={<Admin />} />   
     </Route>
      
 
       <Route path='/' element={    <FirebaseProvider><Dashbord /></FirebaseProvider> }>
       <Route index element={<Home/>} />
+      
       <Route path='/products' element={<Products />} />
       <Route path='/product/:id' element={<ProductDetail/>} />
       <Route path='/cart' element={<Cart />} />
       <Route path='/orders' element={<Orders />} />
       <Route path="/order-details/:orderId" element={<OrderDetails />} />
       <Route path="/checkout" element={<Checkout />} /> 
+      <Route path='/contact' element={<Contact />}/>
       </Route>
 
 

@@ -30,64 +30,66 @@ const OrderDetails = () => {
   console.log(orderId) 
 
   return (
-    <div className="order-details-page w-[90%] m-auto">
-      {orderDetails ? (
-        <div className="order-details">
-          <h1 className="text-3xl font-bold mb-4">Order Details</h1>
-          <p className="mb-2">Order ID: {orderId}</p>
-          <p className="mb-2">Customer Name: {orderDetails.name}</p>
-          <p className="mb-2">Email: {orderDetails.email}</p>
-          <p className="mb-2">Phone: {orderDetails.number}</p>
-          <p className="mb-2">Address: {orderDetails.address}</p>
-          <p className="mb-2">Total Items: {orderDetails.totalQuantity}</p>
-          <p className="mb-2">Total Price: Rs. {orderDetails.totalPrice}</p>
-          <p className="mb-2">Order Status: {orderDetails.Status}</p>
-          <h3 className="mt-4 text-xl font-semibold">Items Purchased:</h3>  
-          <div>
+<div className="order-details-page w-[90%] m-auto">
+  {orderDetails ? (
+    <div className="order-details p-4 sm:p-6 lg:p-8 bg-white shadow-md rounded-md">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4">Order Details</h1>
+      <p className="mb-2 text-sm sm:text-base">Order ID: <span className="font-semibold">{orderId}</span></p>
+      <p className="mb-2 text-sm sm:text-base">Customer Name: <span className="font-semibold">{orderDetails.name}</span></p>
+      <p className="mb-2 text-sm sm:text-base">Email: <span className="font-semibold">{orderDetails.email}</span></p>
+      <p className="mb-2 text-sm sm:text-base">Phone: <span className="font-semibold">{orderDetails.number}</span></p>
+      <p className="mb-2 text-sm sm:text-base">Address: <span className="font-semibold">{orderDetails.address}</span></p>
+      <p className="mb-2 text-sm sm:text-base">Total Items: <span className="font-semibold">{orderDetails.totalQuantity}</span></p>
+      <p className="mb-2 text-sm sm:text-base">Total Price: <span className="font-semibold">Rs. {orderDetails.totalPrice}</span></p>
+      <p className="mb-2 text-sm sm:text-base">Order Status: <span className="font-semibold">{orderDetails.Status}</span></p>
+      <h3 className="mt-4 text-lg sm:text-xl font-semibold">Items Purchased:</h3>
+      
+      <div className="overflow-x-auto">
+        <table className="w-full text-center">
+          <thead className="h-[7vh]" style={{ background: "#faf1d4" }}>
+            <tr>
+              <th className="text-sm sm:text-base">Product Image</th>
+              <th className="w-[30%] text-sm sm:text-base">Product Name</th>
+              <th className="text-sm sm:text-base">Price</th>
+              <th className="text-sm sm:text-base">Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orderDetails.items.map((item, index) => (
+              <tr key={index}>
+                <td>
+                  <Image src={item.image} height={100} width={100} />
+                </td>
+                <td>
+                  <h1 className="text-blue-300 text-sm sm:text-base">{item.title}</h1>
+                </td>
+                <td>
+                  <h1 className="text-sm sm:text-base">Rs. {item.price}</h1>
+                </td>
+                <td>
+                  <Button className="text-sm sm:text-base">Quantity: {item.quantity}</Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-                <table className="w-full text-center">
-                <thead className="h-[7vh]" style={{ background: "#faf1d4" }}>
-                  <tr>
-                    <th>Product Image</th>
-                    <th className="w-[10vw]">Product Name</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    
-                  </tr>
-                </thead>
-                {orderDetails.items.map((item, index) => (
-                  <tbody key={index}>
-                    <tr>
-                      <td>
-                        <Image src={item.image} height={100} width={100} />
-                      </td>
-                      <td>
-                        <h1 className="text-blue-300 w-[10vw]">{item.title}</h1>
-                      </td>
-                      <td>
-                        <h1>Rs. {item.price}</h1>
-                      </td>
-                      <td>
-                        <Button>Quantity: {item.quantity}</Button>
-                      </td>
-                    </tr>
-                  </tbody>
-                ))}
-              </table>
-
-          </div>
-          <Button
-            className="mt-4"
-            onClick={() => window.history.back()}
-            type="primary"
-          >
-            Back to Orders
-          </Button>
-        </div>
-      ) : (
-        <Spin size="large" fullscreen={true} percent={"auto"}  />
-      )}
+      <Button
+        className="mt-4 w-full sm:w-auto p-2 sm:p-4"
+        onClick={() => window.history.back()}
+        type="primary"
+      >
+        Back to Orders
+      </Button>
     </div>
+  ) : (
+    <Spin size="large" fullscreen={true} />
+  )}
+</div>
+
+  
+
   );
 };
 

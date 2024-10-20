@@ -20,15 +20,18 @@ function ProductDetail(){
     
     return(
         <section className="text-gray-600 body-font overflow-hidden">
-          <div className="h-[10vh] bg-yellow-50 flex items-center px-20" style={{background:"#f0dfaa"}}>
-         <Link to={'/'}>
-          <div className="w-[5vw]"> Home {" > "}</div>
-         </Link>
-         <Link to={'/products'}>
-             <div className="w-[5vw] "> Shop {" > "}</div>
-         </Link>
-          <div className="w-[10vw]">{product.title} </div>
-          </div>
+        <div className="h-[10vh] bg-yellow-50 flex items-center justify-between px-5 md:px-20" style={{ background: "#f0dfaa" }}>
+  <div className="flex items-center">
+    <Link to={'/'}>
+      <div className="text-sm md:text-base">Home {" > "}</div>
+    </Link>
+    <Link to={'/products'} className="ml-2">
+      <div className="text-sm md:text-base">Shop {" > "}</div>
+    </Link>
+  </div>
+  <div className="text-sm md:text-base">{product.title}</div>
+</div>
+
         <div className="container px-5 py-24 mx-auto" style={{borderBottom:"1px solid #dbdad7"}}>
           <div className="lg:w-4/5 mx-auto flex flex-wrap">
             <img

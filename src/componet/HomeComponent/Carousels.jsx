@@ -60,44 +60,36 @@ export default function Carousels(){
 
 
 return(
-  <div className="parents h-[65vh] w-full py-14">
-
-    <div className='flex justify-center w-[90%] mx-auto'> 
-
-    <div className="content w-[400px] py-20 ">
-     <h1 className='font-bold text-4xl mt-10 '>50+ Beautiful rooms inspiration</h1>
-     <p className='text-sm mt-3'>Our designer already made a lot pf beautiful <br /> 
-     prototips of rooms that inpiration you</p>
-     <button className='w-[40%] my-5 px-5 py-3 text-white ' style={{backgroundColor:""}}>Explore More</button>
+  <div className="parents h-auto w-full py-14 flex flex-col items-center">
+  <div className='flex flex-col md:flex-row justify-center w-[90%] mx-auto'> 
+    <div className="content w-full md:w-[400px] py-20">
+      <h1 className='font-bold text-4xl mt-10'>50+ Beautiful Rooms Inspiration</h1>
+      <p className='text-sm mt-3'>Our designers have created many beautiful prototypes of rooms to inspire you.</p>
+      <button className='w-[80%] md:w-[40%] my-5 px-5 py-3 text-white bg-yellow-500 rounded'>
+        Explore More
+      </button>
     </div>
     
     <div className="slider-container">
-      {/* <button className="prev-btn" onClick={prevSlide}>
-        &#10094;
-      </button> */}
       <div className="slider">
         {cardData.map((card, index) => (
-          <div
-            key={index}
-            className={`slide ${index === currentSlide ? 'active' : ''}`}
-          >
+          <div key={index} className={`slide ${index === currentSlide ? 'active' : ''}`}>
             <div className="card">
               <img src={card.image} alt={card.title} className="card-image" />
               <div className="card-content">
-              <p className="card-description">{card.description}</p>
-              <h2 className="card-title font-bold">{card.title}</h2>
+                <h2 className="card-title font-bold">{card.title}</h2>
+                <p className="card-description">{card.description}</p>
               </div>
             </div>
           </div>
         ))}
       </div>
-      <button className="next-btn" onClick={nextSlide}>
-        &#10095;
-      </button>
-    </div>
-
+      {/* <button className="prev-btn" onClick={prevSlide}>&#10094;</button> */}
+      <button className="next-btn" onClick={nextSlide}>&#10095;</button>
     </div>
   </div>
+</div>
+
 )
 }
 
