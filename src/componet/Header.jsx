@@ -94,26 +94,16 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Search Bar */}
-          {/* <div className="hidden md:block flex-1 max-w-md mx-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="w-full bg-gray-100 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-            </div>
-          </div> */}
+       
 
           {/* User and Cart Icons */}
           <div className="hidden md:flex items-center">
             {!user ? (
               <>
               <User />
-                <button onClick={handleGoogleLogin} className="m-1 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
-                  GoogleLogin
-                </button>
+                <Link to={"/auth/login"} className="m-1 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
+                  Login
+                </Link>
                 <button onClick={toggleCartModal} className="text-gray-600 hover:text-gray-900 p-2 ml-4 relative">
                   <Badge count={cartItems.length}>
                     <ShoppingCart className="h-6 w-6" style={{ fontSize: 30, color: "orange" }} />

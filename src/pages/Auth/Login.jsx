@@ -14,7 +14,12 @@ function Login() {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Successfully logged in
-        navigate('/'); // Redirect to home page after login
+        // Check for admin credentials
+        if (email === 'admin@gmail.com' && password === 'admin123') {
+          navigate('/auth/admin'); // Redirect to admin page
+        } else {
+          navigate('/'); // Redirect to home page for regular users
+        }
       })
       .catch((error) => {
         setError('Invalid email or password');

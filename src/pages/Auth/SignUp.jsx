@@ -17,7 +17,7 @@ function SignUp() {
         const user = userCredential.user
         console.log(user)
         // User successfully signed up
-        navigate('/login'); // Redirect to home page after sign up
+        navigate('/auth/login'); // Redirect to home page after sign up
       })
       .catch((error) => {
         setError('Error signing up. Please try again.',error);
