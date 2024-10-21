@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import ProductCard from "../componet/ProductCard";
 import { Link } from "react-router-dom";
 import { Button, Carousel, Row, Spin } from "antd";
-import Hero from "../componet/HomeComponent/Hero";
+import Hero from "../componet/Hero";
 import HeroLower from "../componet/HomeComponent/HeroLower";
 import Carousels from "../componet/HomeComponent/Carousels";
 import ImageGallery from '../componet/HomeComponent/Gallery';
