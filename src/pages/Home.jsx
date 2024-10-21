@@ -1,4 +1,4 @@
-import rectangle24 from '../assets/Rectangle24.png'
+
 import { useEffect, useState } from "react";
 import ProductCard from "../componet/ProductCard";
 import { Link } from "react-router-dom";
