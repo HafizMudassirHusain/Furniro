@@ -1,69 +1,64 @@
 import React, { useState, useContext } from 'react'; 
-import { Form, Input, Button, message, Modal } from 'antd';
-import { auth, googleProvider } from './firebase';
-import { signInWithPopup } from 'firebase/auth';
-import { CartContext } from '../context/CartContext';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from './firebase';
-import { Link, useNavigate } from 'react-router-dom';
-import producthero from '../assets/producthero1.1.jpg';
-import Banner from '../componet/ProductsComponent/Banner';
-import { CiCircleFilled } from '@ant-design/icons';
-import { FirebaseContext } from '../context/FirebaseContext';
-import navlogo from '../assets/navLogo.png';
+import { Form, Input, Button, message, Modal } from 'antd'; 
+import { auth, googleProvider } from './firebase'; 
+import { signInWithPopup } from 'firebase/auth'; 
+import { CartContext } from '../context/CartContext'; 
+import { addDoc, collection } from 'firebase/firestore'; 
+import { db } from './firebase'; 
+import { Link, useNavigate } from 'react-router-dom'; 
+import producthero from '../assets/producthero1.1.jpg'; 
+import Banner from '../componet/ProductsComponent/Banner'; 
+import { CiCircleFilled } from '@ant-design/icons'; 
+import { FirebaseContext } from '../context/FirebaseContext'; 
+import navlogo from '../assets/navLogo.png'; 
 import jsPDF from 'jspdf'; 
 
-function Checkout() {
-  const { cartItems, clearCart } = useContext(CartContext);
-  const [isLoading, setIsLoading] = useState(false);
-  const [continueAsGuest, setContinueAsGuest] = useState(false);
-  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
-  const { user, setUser } = useContext(FirebaseContext);
+function Checkout() { 
+  const { cartItems, clearCart } = useContext(CartContext); 
+  const [isLoading, setIsLoading] = useState(false); 
+  const [continueAsGuest, setContinueAsGuest] = useState(false); 
+  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false); 
+  const [isLogin, setIsLogin] = useState(false); 
+  const { user, setUser } = useContext(FirebaseContext); 
   const navigate = useNavigate();
 
-  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0); 
+  const totalPrice = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0); 
   const WHATSAPP_NUMBER = '923442241275';
 
-  const checkOutOrder = async (values) => {
+  const checkOutOrder = async (values) => { 
     setIsLoading(true);
 
-  // Get the current date and time
-  const currentDateTime = new Date();
-  
-  // Format the date as "DD/MM/YYYY"
-  const formattedDate = `${String(currentDateTime.getDate()).padStart(2, '0')}/${String(currentDateTime.getMonth() + 1).padStart(2, '0')}/${currentDateTime.getFullYear()}`;
-  
-  // Format the time as "HH:mm"
-  const hours = String(currentDateTime.getHours()).padStart(2, '0');
-  const minutes = String(currentDateTime.getMinutes()).padStart(2, '0');
-  const formattedTime = `${hours}:${minutes}`;
-  
-  const currentDay = currentDateTime.toLocaleString('en-US', { weekday: 'long' });
+    // Get the current date and time
+    const currentDateTime = new Date();
+    const formattedDate = `${String(currentDateTime.getDate()).padStart(2, '0')}/${String(currentDateTime.getMonth() + 1).padStart(2, '0')}/${currentDateTime.getFullYear()}`;
+    const hours = String(currentDateTime.getHours()).padStart(2, '0');
+    const minutes = String(currentDateTime.getMinutes()).padStart(2, '0');
+    const formattedTime = `${hours}:${minutes}`;
+    const currentDay = currentDateTime.toLocaleString('en-US', { weekday: 'long' });
 
-  const checkOutObj = {
-    ...values,
-    totalPrice,
-    totalQuantity,
-    Status: "pending",
-    date: formattedDate,
-    time: formattedTime,
-    day: currentDay,
-    user: auth.currentUser ? auth.currentUser.uid : "guest",
-    items: cartItems.map(data => ({
-      title: data.title,
-      price: data.price,
-      quantity: data.quantity,
-      image: data.thumbnail
-    })),
-  };
+    const checkOutObj = { 
+      ...values, 
+      totalPrice, 
+      totalQuantity, 
+      Status: "pending", 
+      date: formattedDate, 
+      time: formattedTime, 
+      day: currentDay, 
+      user: auth.currentUser ? auth.currentUser.uid : "guest", 
+      items: cartItems.map(data => ({ 
+        title: data.title, 
+        price: data.price, 
+        quantity: data.quantity, 
+        image: data.thumbnail 
+      })), 
+    };
 
     const docRef = collection(db, "orders");
 
-    try {
-      await addDoc(docRef, checkOutObj);
-      message.success("Your order is placed!");
+    try { 
+      await addDoc(docRef, checkOutObj); 
+      message.success("Your order is placed!"); 
       setIsConfirmationVisible(true);
 
       // Generate and download the invoice
@@ -72,51 +67,58 @@ function Checkout() {
       const encodedOrderDetails = encodeURIComponent(
         `Order Details:\nName: ${values.name}\nEmail: ${values.email}\nPhone: ${values.number}\nAddress: ${values.address}\nTotal Items: ${totalQuantity}\nTotal Price: $${Math.floor(totalPrice)}\nItems: ${cartItems.map(item => `(${item.quantity}) ${item.title} - $${item.price}`).join(', ')}`
       );
-
       window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedOrderDetails}`);
+
       clearCart();
-
-    } catch (error) {
-      message.error("Order placement failed: " + error.message);
-    } finally {
-      setIsLoading(false);
-    }
+      
+      // Conditional redirection based on user or guest
+      if (user) {
+        navigate("/orders");  // Redirect logged-in users to the Orders page
+      } else {
+        navigate("/");  // Redirect guests to the Home page
+      }
+      
+    } catch (error) { 
+      message.error("Order placement failed: " + error.message); 
+    } finally { 
+      setIsLoading(false); 
+    } 
   };
 
-  const generateInvoice = (values, orderDetails) => {
-    const doc = new jsPDF();
-    doc.text(`Invoice`, 10, 10);
-    doc.text(`Name: ${values.name}`, 10, 20);
-    doc.text(`Email: ${values.email}`, 10, 30);
-    doc.text(`Phone: ${values.number}`, 10, 40);
-    doc.text(`Address: ${values.address}`, 10, 50);
-    doc.text(`Total Items: ${orderDetails.totalQuantity}`, 10, 60);
-    doc.text(`Total Price: $${Math.floor(orderDetails.totalPrice)}`, 10, 70);
-    doc.text(`Date: ${orderDetails.date}`, 10, 80);
-    doc.text(`Time: ${orderDetails.time}`, 10, 90);
-    doc.text(`Day: ${orderDetails.day}`, 10, 100);
-    orderDetails.items.forEach((item, index) => {
-      doc.text(`(${item.quantity}) ${item.title} - $${item.price}`, 10, 110 + index * 10);
-    });
-    doc.save('invoice.pdf');
+  const generateInvoice = (values, orderDetails) => { 
+    const doc = new jsPDF(); 
+    doc.text(`Invoice`, 10, 10); 
+    doc.text(`Name: ${values.name}`, 10, 20); 
+    doc.text(`Email: ${values.email}`, 10, 30); 
+    doc.text(`Phone: ${values.number}`, 10, 40); 
+    doc.text(`Address: ${values.address}`, 10, 50); 
+    doc.text(`Total Items: ${orderDetails.totalQuantity}`, 10, 60); 
+    doc.text(`Total Price: $${Math.floor(orderDetails.totalPrice)}`, 10, 70); 
+    doc.text(`Date: ${orderDetails.date}`, 10, 80); 
+    doc.text(`Time: ${orderDetails.time}`, 10, 90); 
+    doc.text(`Day: ${orderDetails.day}`, 10, 100); 
+    orderDetails.items.forEach((item, index) => { 
+      doc.text(`(${item.quantity}) ${item.title} - $${item.price}`, 10, 110 + index * 10); 
+    }); 
+    doc.save('invoice.pdf'); 
   };
 
-  const signInWithGoogle = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      message.success(`Welcome, ${result.user.displayName}`);
-      setIsLogin(true);
-      setUser(result.user);
-    } catch (error) {
-      setIsLogin(false);
-      setUser(null);
-      message.error(`Google Sign-In failed: ${error.message}`);
-    }
-  }
+  const signInWithGoogle = async () => { 
+    try { 
+      const result = await signInWithPopup(auth, googleProvider); 
+      message.success(`Welcome, ${result.user.displayName}`); 
+      setIsLogin(true); 
+      setUser(result.user); 
+    } catch (error) { 
+      setIsLogin(false); 
+      setUser(null); 
+      message.error(`Google Sign-In failed: ${error.message}`); 
+    } 
+  };
 
-  const handleConfirmationOk = () => {
-    setIsConfirmationVisible(false);
-    navigate("/orders");
+  const handleConfirmationOk = () => { 
+    setIsConfirmationVisible(false); 
+    navigate("/orders"); 
   };
 
   return (

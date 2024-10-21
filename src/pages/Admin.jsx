@@ -1,7 +1,36 @@
 import React, { useEffect, useState } from 'react'; 
-import { db } from './firebase'; // Adjust the import based on your Firebase setup
+import { db } from './firebase'; 
 import { collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import './admin.css'; // Import the CSS file for styling
+import './admin.css'; 
+
+import { Bar , Line} from 'react-chartjs-2'; // Importing both Bar and Line charts from Chart.js
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,    // Add this
+  LineElement,     // Add this
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Spin } from 'antd';
+
+// Register Chart.js modules
+// Register Chart.js modules
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,   // Register PointElement
+  LineElement,    // Register LineElement
+  Title,
+  Tooltip,
+  Legend
+);
+
+
 
 const Admin = () => {
   const [orders, setOrders] = useState([]);
@@ -14,18 +43,35 @@ const Admin = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [notification, setNotification] = useState('');
   const [editData, setEditData] = useState({});
+  const [loading, setLoading] = useState(true);
+ 
+
+ const [chartData, setChartData] = useState({
+  labels: [],
+  datasets: [{
+    label: 'Order Status',
+    data: [],
+    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+  }]
+});
 
 
   useEffect(() => {
     const fetchOrders = async () => {
+      setLoading(true);
       try {
         const orderCollection = collection(db, 'orders');
         const orderSnapshot = await getDocs(orderCollection);
         const orderList = orderSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setOrders(orderList);
         setFilteredOrders(orderList);
+
+           // Set chart data after fetching orders
+           prepareChartData(orderList);
       } catch (error) {
         console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false); // Set loading to false after fetching data
       }
     };
 
@@ -119,11 +165,45 @@ const Admin = () => {
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const currentOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
+  // Order Status Data (e.g., Completed, Pending)
+  const prepareChartData = (orderList) => {
+    const statusCounts = orderList.reduce((acc, order) => {
+      const { Status } = order;
+      acc[Status] = (acc[Status] || 0) + 1;
+      return acc;
+    }, {});
+
+    setChartData({
+      labels: Object.keys(statusCounts), 
+      datasets: [{
+        label: 'Order Status',
+        data: Object.values(statusCounts), 
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'], 
+      }]
+    });
+  };
+
+
+
+   // Sample Data for the Line Chart (existing)
+   const lineData = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+    datasets: [
+      {
+        label: 'Revenue',
+        data: [400, 300, 200, 300, 450, 500],
+        borderColor: '#FFCE56',
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+      },
+    ],
+  };
+
+
   return (
     <div className="dashboard">
       <header className="header">
-        <h1>Admin Panel</h1>
-        <button onClick={exportToCSV}>Export to CSV</button>
+        <h1 className='text-3xl font-bold ml-6'>Admin Panel</h1>
+        <button className='border border-white py-2 px-4' onClick={exportToCSV}>Export to CSV</button>
       </header>
       <div className="main-container">
         <aside className="sidebar">
@@ -150,12 +230,15 @@ const Admin = () => {
               <option value="totalQuantity">Sort by Total Quantity</option>
             </select>
           </div>
-
+          {loading ? ( // Show loading indicator if data is being fetched
+            // <div>Loading data, please wait...</div>
+             <Spin />
+          ) : (
           <div className="table-section">
-            <h2>User Information</h2>
-            <table>
-              <thead>
-                <tr>
+            <h2>User Information</h2>         
+           <table>
+              <thead >
+                <tr style={{ background: "#faf1d4" }}>
                   <th>ID</th>
                   <th>Name</th>
                   <th>Email</th>
@@ -167,33 +250,37 @@ const Admin = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentOrders.map(order => (
-                  <tr key={order.id} onClick={() => handleRowClick(order)}>
-                    <td>{order.id}</td>
-                    <td>{order.name}</td>
-                    <td>{order.email}</td>
-                    <td>${order.totalPrice.toFixed(2)}</td>
-                    <td>{order.totalQuantity}</td>
-                    <td>{order.time}</td>
-                    <td>
-                      <select 
-                        value={order.Status} 
-                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                      >
-                        <option value="Pending">Pending</option>
-                        <option value="Shipped">Shipped</option>
-                        <option value="Completed">Completed</option>
-                      </select>
-                    </td>
-                    <td>
-                      <button className='bg-amber-500 p-2' onClick={() => handleEdit(order)}>Edit</button>
-                      <button className='bg-red-400 p-2 ml-2' onClick={() => handleDelete(order.id)}>Delete</button>
-                    </td>
-                  </tr>
-                ))}
+            
+               
+               {currentOrders.map(order => (
+                 <tr key={order.id} onClick={() => handleRowClick(order)}>
+                   <td>{order.id}</td>
+                   <td>{order.name}</td>
+                   <td>{order.email}</td>
+                   <td>${order.totalPrice.toFixed(2)}</td>
+                   <td>{order.totalQuantity}</td>
+                   <td>{order.time}</td>
+                   <td>
+                     <select 
+                       value={order.Status} 
+                       onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                     >
+                       <option value="Pending">Pending</option>
+                       <option value="Shipped">Shipped</option>
+                       <option value="Completed">Completed</option>
+                     </select>
+                   </td>
+                   <td>
+                     <button className='border border-amber-300 text-black bg-orange-100 px-3 py-2'  onClick={() => handleEdit(order)}>Edit</button>
+                     <button className='border border-amber-300 text-black bg-orange-100 px-3 py-2'  onClick={() => handleDelete(order.id)}>Delete</button>
+                   </td>
+                 </tr>
+               ))}
+               
               </tbody>
             </table>
           </div>
+          )}
 
           {selectedOrder && (
             <div className="table-section">
@@ -223,10 +310,12 @@ const Admin = () => {
             </div>
           )}
 
-          <div className="pagination">
+          <div className="pagination bg-amber-300 my-5 p-2 ">
+
             {Array.from({ length: totalPages }, (_, index) => (
-              <button key={index} onClick={() => handlePageChange(index + 1)}>
-                {index + 1}
+              <button className='border border-white text-white px-3 py-2 mx-2' 
+              key={index} onClick={() => handlePageChange(index + 1)}>
+                {index + 1} 
               </button>
             ))}
           </div>
@@ -258,6 +347,36 @@ const Admin = () => {
               <button className='bg-red-500 p-2 ml-2' onClick={() => setEditModalOpen(false)}>Cancel</button>
             </div>
           )}
+
+
+           {/* Analytics Section */}
+ <div className="analytics-section">
+
+<h2>Analytics Overview</h2>
+<div className="chart-container">
+<div className="chart">
+  <h2>Revenue Chart (Line)</h2>
+  <Line data={lineData} />
+</div>
+  {/* Render Bar chart only when chartData is ready */}
+  {chartData && chartData.labels.length > 0 ? (
+  <div className='chart bg-orange-100'>
+    <h2>Status Chart (Bar)</h2>
+    <Bar 
+    className='h-full'
+      data={chartData}
+      options={{
+        responsive: true,
+      }} 
+    />
+  </div>
+  ) : (
+    <p>Loading chart...</p>
+  )}
+</div>
+</div>
+
+
         </main>
       </div>
     </div>
@@ -265,41 +384,3 @@ const Admin = () => {
 };
 
 export default Admin;
-
-
-
-
-
-
-
-
-
-// UI Enhancements
-// Responsive Design:
-
-// Ensure the layout is responsive across all devices. Use CSS Grid or Flexbox to manage layout efficiently.
-// Color Scheme and Typography:
-
-// Use a consistent color scheme and typography to create a more visually appealing UI. Consider using a UI framework like Bootstrap or Material-UI for pre-designed components.
-// Hover Effects and Animations:
-
-// Add subtle hover effects on buttons and tables for better interactivity.
-// Use CSS animations for showing and hiding elements to create a smoother transition.
-// Card Layout for User Info:
-
-// Instead of a traditional table for user information, consider using cards. Each card can display user details with a more modern look.
-// Item Details as Accordions:
-
-// For item details, use accordion components that expand when a user clicks on a specific order. This can save space and provide a cleaner interface.
-// Tooltips:
-
-// Implement tooltips on icons or buttons to provide additional information without cluttering the UI.
-// Icons and Imagery:
-
-// Use icons to represent actions (edit, delete) and enhance visual appeal. This helps in creating a more intuitive user experience.
-// Dashboard Analytics:
-
-// Consider adding a dashboard section with analytics, such as total sales, number of users, and order trends. This can be represented with charts (using libraries like Chart.js or D3.js).
-// User Role Management:
-
-// If applicable, implement user role management where different admins have different access levels (e.g., view only, edit).

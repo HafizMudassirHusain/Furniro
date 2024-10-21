@@ -12,6 +12,7 @@ import navlogo from '../assets/navLogo.png';
 const Orders =  () => {
   const [orders, setOrders] = useState([]);
   const { user } = useContext(FirebaseContext); 
+  const [Loading, setLoading] = useState(true);
 console.log(orders);
 console.log(user);
 
@@ -20,7 +21,6 @@ console.log(user);
   useEffect(() => {
     const fetchOrders = async () => {
       if (user ) {
-
         const q = query(collection(db, 'orders'), where('user', '==', user.uid));
         const querySnapshot = await getDocs(q);
        const fetchedOrders = [];
@@ -28,8 +28,9 @@ console.log(user);
           fetchedOrders.push({ ...doc.data(), id: doc.id });
         });
         setOrders(fetchedOrders);
+        setLoading(false)
       } else {
-        // Fetch orders for guests (if necessary)
+      
         message.error("Please log in to view your orders.");
         // navigate("/auth/login"); // Redirect to login if user is not logged in
       }
@@ -67,7 +68,12 @@ console.log(user);
     </div>
   </div>
 
+
+{
+  user ? (
   <div className="body m-auto w-[90%]">
+  
+
     <div>
       <h1 className="text-3xl sm:text-4xl font-bold mt-10">Welcome {user?.displayName}</h1>
     </div>
@@ -100,6 +106,16 @@ console.log(user);
       )}
     </div>
   </div>
+  ) : (
+    <div className="text-center text-lg font-semibold">
+    <p>Please log in to see your orders.</p>
+    <div className="text-center text-lg font-semibold">No Orders Found</div>
+  </div>
+  )
+
+}
+
+
 </div>
 
   );

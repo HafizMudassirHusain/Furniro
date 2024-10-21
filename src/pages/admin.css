@@ -1,6 +1,6 @@
 body {
   font-family: 'Arial', sans-serif;
-  background-color: #f4f4f4;
+  background-color: #ffffff;
   margin: 0;
 }
 
@@ -11,7 +11,7 @@ body {
 }
 
 .header {
-  background: #35424a;
+  background:  #f3d46d;
   color: white;
   padding: 20px;
   display: flex;
@@ -25,7 +25,7 @@ body {
 }
 
 .sidebar {
-  background: #35424a;
+  background:  #f5da80;
   color: white;
   width: 250px; /* Increased width for better usability */
   padding: 20px;
@@ -45,7 +45,8 @@ body {
 }
 
 .sidebar nav ul li:hover {
-  background: #4a5b6b;
+  background: #ffffff;
+  color: black;
 }
 
 .main-content {
@@ -74,7 +75,7 @@ table th, table td {
 }
 
 table th {
-  background: #f4f4f4;
+  background: #f6d157;
 }
 
 table tbody tr:hover {
@@ -120,8 +121,8 @@ table tbody tr:hover {
 
 /* Notification Styles */
 .notification {
-  background: #dff0d8;
-  color: #3c763d;
+  background: #b5f59c;
+  color: #ffffff;
   padding: 10px;
   border-radius: 5px;
   margin-bottom: 20px;
@@ -145,5 +146,70 @@ table tbody tr:hover {
 
   .main-content {
     padding: 10px;
+  }
+}
+
+/* ======================== */
+.analytics-section {
+  margin: 30px auto;
+  padding: 30px;
+  background-color: #f9f9f9;  /* Light background */
+  border-radius: 10px;          /* Rounded corners */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);  /* Soft shadow */
+}
+
+.analytics-section h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 25px;
+  text-align: center;  /* Center align the heading */
+}
+
+.chart-container {
+
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;  /* Allow wrapping on smaller screens */
+  gap: 30px;  /* Spacing between charts */
+}
+
+.chart {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  flex: 1;  /* Allow charts to take equal space */
+  min-width: 300px;  /* Minimum width for charts */
+  max-width: 600px;  /* Max width for individual charts */
+}
+
+.chart h2 {
+  font-size: 1.6rem;
+  color: #555;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+p {
+  text-align: center;
+  color: #999;
+}
+
+/* Make charts more responsive */
+.chart canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* Mobile responsiveness */
+@media screen and (max-width: 768px) {
+  .chart-container {
+    flex-direction: column;  /* Stack charts on top of each other */
+    gap: 20px;
+  }
+
+  .chart {
+    width: 100%;  /* Full width on mobile */
   }
 }
