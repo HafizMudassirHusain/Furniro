@@ -13,7 +13,7 @@ import { FirebaseProvider } from './context/FirebaseContext';
 import OrderDetails from './pages/OrderDetails';
 import Login from './pages/Auth/Login';
 import Contact from './componet/ContactUs/Contact';
-import Admin from './pages/admin';
+import Admin from './pages/Auth/Admin';
 
 function App() {
   return (
