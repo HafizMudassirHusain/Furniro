@@ -14,6 +14,7 @@ import OrderDetails from './pages/OrderDetails';
 import Login from './pages/Auth/Login';
 import Contact from './componet/ContactUs/Contact';
 import Admin from './pages/Auth/Admin';
+import UserManagement from './pages/Auth/UserManagement';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
 <Route path='login' element={<Login />}/>
 <Route path='signup' element={<SignUp />}/> 
 <Route path='admin' element={<Admin />} />   
+<Route path="users" element={<UserManagement />} /> 
     </Route>
      
 

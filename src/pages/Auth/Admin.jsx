@@ -16,6 +16,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Spin } from 'antd';
+import { Link } from 'react-router-dom';
 
 // Register Chart.js modules
 // Register Chart.js modules
@@ -105,10 +106,10 @@ const Admin = () => {
   };
 
   const handleEdit = (order) => {
-    setEditData(order);
-    setEditModalOpen(true);
+    setEditData(order);  // Set the current order data for editing
+    setEditModalOpen(true);  // Open the edit modal
   };
-
+  
   const handleSaveEdit = async () => {
     try {
       const orderRef = doc(db, 'orders', editData.id);
@@ -119,9 +120,14 @@ const Admin = () => {
         totalQuantity: editData.totalQuantity,
         status: editData.status,
       });
-      setOrders(orders.map(order => (order.id === editData.id ? { ...order, ...editData } : order)));
+  
+      // Update the local state
+      setOrders(orders.map(order => 
+        order.id === editData.id ? { ...order, ...editData } : order
+      ));
+  
       setNotification('Order updated successfully!');
-      setEditModalOpen(false);
+      setEditModalOpen(false);  // Close the modal
     } catch (error) {
       console.error("Error updating order:", error);
       setNotification('Failed to update order.');
@@ -210,7 +216,7 @@ const Admin = () => {
           <nav>
             <ul>
               <li>Dashboard</li>
-              <li>Users</li>
+              <li><Link to='auth/users'>User</Link></li>
               <li>Settings</li>
               <li>Reports</li>
             </ul>
@@ -321,32 +327,45 @@ const Admin = () => {
           </div>
 
           {editModalOpen && (
-            <div className="modal">
-              <h2>Edit Order</h2>
-              <input 
-                type="text" 
-                value={editData.name} 
-                onChange={(e) => setEditData({ ...editData, name: e.target.value })} 
-                placeholder="Name"
-              />
-              <input 
-                type="text" 
-                value={editData.email} 
-                onChange={(e) => setEditData({ ...editData, email: e.target.value })} 
-                placeholder="Email"
-              />
-              <select 
-                value={editData.Status} 
-                onChange={(e) => setEditData({ ...editData, Status: e.target.value })} 
-              >
-                <option value="Pending">Pending</option>
-                <option value="Shipped">Shipped</option>
-                <option value="Completed">Completed</option>
-              </select>
-              <button className='bg-amber-500 p-2' onClick={handleSaveEdit}>Save</button>
-              <button className='bg-red-500 p-2 ml-2' onClick={() => setEditModalOpen(false)}>Cancel</button>
-            </div>
-          )}
+  <div className="modal">
+    <h2>Edit Order</h2>
+    <input 
+      type="text" 
+      value={editData.name || ''} 
+      onChange={(e) => setEditData({ ...editData, name: e.target.value })} 
+      placeholder="Name"
+    />
+    <input 
+      type="text" 
+      value={editData.email || ''} 
+      onChange={(e) => setEditData({ ...editData, email: e.target.value })} 
+      placeholder="Email"
+    />
+    <input 
+      type="number" 
+      value={editData.totalPrice || ''} 
+      onChange={(e) => setEditData({ ...editData, totalPrice: Number(e.target.value) })} 
+      placeholder="Total Price"
+    />
+    <input 
+      type="number" 
+      value={editData.totalQuantity || ''} 
+      onChange={(e) => setEditData({ ...editData, totalQuantity: Number(e.target.value) })} 
+      placeholder="Total Quantity"
+    />
+    <select 
+      value={editData.status || 'Pending'} 
+      onChange={(e) => setEditData({ ...editData, status: e.target.value })} 
+    >
+      <option value="Pending">Pending</option>
+      <option value="Shipped">Shipped</option>
+      <option value="Completed">Completed</option>
+    </select>
+    <button className='bg-amber-500 p-2' onClick={handleSaveEdit}>Save</button>
+    <button className='bg-red-500 p-2 ml-2' onClick={() => setEditModalOpen(false)}>Cancel</button>
+  </div>
+)}
+
 
 
            {/* Analytics Section */}

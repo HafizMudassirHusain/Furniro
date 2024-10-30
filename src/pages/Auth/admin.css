@@ -213,3 +213,26 @@ p {
     width: 100%;  /* Full width on mobile */
   }
 }
+/* =============================================================== */
+
+
+.user-management {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.user-management table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-management th, .user-management td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.user-management th {
+  background-color: #f2f2f2;
+}
+
