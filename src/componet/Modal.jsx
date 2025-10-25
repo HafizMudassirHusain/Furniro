@@ -1,77 +1,137 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Modal, Form, Input } from 'antd';
-import {auth} from '../pages/firebase';
+import React, { useEffect, useState } from "react";
+import { Button, Modal, Form, Input } from "antd";
+import { auth, googleProvider } from "../pages/firebase";
+import { signInWithPopup } from "firebase/auth";
 
-function Modals({showModal,
-   handleOk,
-    handleCancel,
-    isModalOpen, checkOutOrder}){
+function Modals({
+  isModalOpen,
+  handleOk,
+  handleCancel,
+  checkOutOrder,
+}) {
+  const [continueAsGuest, setContinueAsGuest] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
 
-      useEffect(() => {
-        return setcontinueAsaGuets(false);
-      }, []); 
+  useEffect(() => {
+    setContinueAsGuest(false);
+    setIsLogin(!!auth.currentUser);
+  }, []);
 
-  const isLogin = auth.currentUser;
-  console.log(isLogin)
-   const [continueAsaGuets, setcontinueAsaGuets] = useState(false)
+  // Google sign-in
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      setIsLogin(true);
+    } catch (error) {
+      console.error("Google Sign-in failed:", error.message);
+    }
+  };
 
   return (
-    <>
-      <Modal className='w-1/2 h-102 block'
-      width={"50%"} height={"80vh"}
-       onClick={showModal} 
-       title="Plz Proceed to continue"
-        open={isModalOpen}
-         onOk={handleOk}
-       onCancel={handleCancel}
-       footer={false}>
-        {
-          !isLogin  && !continueAsaGuets &&(
-        <div className='flex flex-col  m-4 p-1'>
-            <p className=' p-2'>plz signUp first to save your history</p>
-        <Button >Continue with Google</Button>
-        <p className='text-center m-4'>-------OR-------</p>
-        <Button onClick={()=> setcontinueAsaGuets(true)} >Continue as a Guest</Button>
-        </div> 
-          )
-        }
+    <Modal
+      title={<span className="text-[#d4af37] font-semibold">Proceed to Checkout</span>}
+      open={isModalOpen}
+      onOk={handleOk}
+      onCancel={handleCancel}
+      footer={null}
+      centered
+      width="90%"
+      className="max-w-[600px]"
+    >
+      {/* When user is not logged in and not continuing as guest */}
+      {!isLogin && !continueAsGuest && (
+        <div className="flex flex-col items-center text-center p-4 space-y-4">
+          <p className="text-lg font-medium text-gray-700">
+            Please sign in to save your order history
+          </p>
 
+          <Button
+            onClick={handleGoogleLogin}
+            className="w-4/5 py-5 border border-[#d4af37] text-[#d4af37] font-medium rounded-md hover:bg-[#d4af37] hover:text-white transition-all"
+          >
+            Continue with Google
+          </Button>
 
-        { !isLogin &&
-        continueAsaGuets && (
-<Form layout='vertical' onFinish={checkOutOrder}>
+          <p className="text-gray-500">— OR —</p>
 
-  <Form.Item label={"Name"} name={"name"}>
-    <Input></Input>
-  </Form.Item>
+          <Button
+            onClick={() => setContinueAsGuest(true)}
+            className="w-4/5 py-5 border border-[#d4af37] text-[#d4af37] font-medium rounded-md hover:bg-[#d4af37] hover:text-white transition-all"
+          >
+            Continue as Guest
+          </Button>
+        </div>
+      )}
 
-  <Form.Item label={"Email"} name={"email"}>
-    <Input></Input>
-  </Form.Item>
+      {/* Guest checkout form */}
+      {!isLogin && continueAsGuest && (
+        <div className="p-4">
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            Guest Checkout
+          </h2>
 
-  <Form.Item label={"Phone Number"} name={"number"}>
-    <Input></Input>
-  </Form.Item>
+          <Form layout="vertical" onFinish={checkOutOrder}>
+            <Form.Item
+              label="Name"
+              name="name"
+              rules={[{ required: true, message: "Please enter your name" }]}
+            >
+              <Input className="p-3 rounded-md border border-gray-300 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
+            </Form.Item>
 
-  <Form.Item label={"Address"} name={"address"}>
-    <Input></Input>
-  </Form.Item>
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[{ required: true, message: "Please enter your email" }]}
+            >
+              <Input className="p-3 rounded-md border border-gray-300 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
+            </Form.Item>
 
-  <Form.Item >
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-  </Form.Item>
+            <Form.Item
+              label="Phone Number"
+              name="number"
+              rules={[{ required: true, message: "Please enter your phone number" }]}
+            >
+              <Input className="p-3 rounded-md border border-gray-300 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
+            </Form.Item>
 
-</Form>
-        )
-        }
+            <Form.Item
+              label="Address"
+              name="address"
+              rules={[{ required: true, message: "Please enter your address" }]}
+            >
+              <Input className="p-3 rounded-md border border-gray-300 focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]" />
+            </Form.Item>
 
-      </Modal>
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="w-full bg-[#d4af37] border-none py-4 text-white font-medium rounded-md hover:bg-[#c7a133] transition-all"
+              >
+                Submit Order
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+      )}
 
-
-    </>
+      {/* Already logged-in user (optional future state) */}
+      {isLogin && (
+        <div className="text-center py-6">
+          <h3 className="text-lg font-semibold text-gray-700">
+            You’re already logged in!
+          </h3>
+          <Button
+            onClick={handleOk}
+            className="mt-4 bg-[#d4af37] text-white font-medium px-6 py-3 rounded-md hover:bg-[#c7a133] transition-all"
+          >
+            Continue to Checkout
+          </Button>
+        </div>
+      )}
+    </Modal>
   );
-};
+}
 
 export default Modals;

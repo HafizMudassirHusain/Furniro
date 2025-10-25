@@ -1,211 +1,226 @@
-import React, { useState } from 'react';
-import { message, Button } from 'antd';
-import producthero from '../../assets/producthero1.1.jpg';
-import navlogo from '../../assets/navLogo.png';
-import './Contact.css'
+import { useState } from "react";
+import { message, Button } from "antd";
+import { PhoneFilled, ClockCircleFilled, MailOutlined } from "@ant-design/icons";
+import { LucideMapPin } from "lucide-react";
+import producthero from "../../assets/producthero1.1.jpg";
+import navlogo from "../../assets/navLogo.png";
+import emailjs from "emailjs-com";
+import { Link } from "react-router-dom";
 import Banner from "../ProductsComponent/Banner";
-import { Link } from 'react-router-dom';
-import { LucideMapPin } from 'lucide-react';
-import { ClockCircleFilled, PhoneFilled } from '@ant-design/icons';
-import emailjs from 'emailjs-com';
-
+import "./Contact.css";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
   });
-
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // EmailJS Integration
-    emailjs.send("service_5ru6wmm","template_ax35b4d",{
+    emailjs
+      .send(
+        "service_5ru6wmm",
+        "template_ax35b4d",
+        {
           name: formData.name,
           subject: formData.subject,
           email: formData.email,
           message: formData.message,
         },
-        'Pv3yL9ioNcyiGiaxV'  // Replace with your EmailJS Public Key
+        "Pv3yL9ioNcyiGiaxV"
       )
       .then(
-        (response) => {
-          message.success('Your message has been sent successfully!');
-          setFormData({
-            name: '',
-            email: '',
-            subject: '',
-            message: '',
-          });
-          setLoading(false);
+        () => {
+          message.success("✅ Message sent successfully!");
+          setFormData({ name: "", email: "", subject: "", message: "" });
         },
-        (error) => {
-          message.error('Failed to send message. Please try again later.');
-          setLoading(false);
-        }
-      );
+        () => message.error("❌ Failed to send message. Try again later.")
+      )
+      .finally(() => setLoading(false));
   };
 
   return (
     <>
-    <div
-  style={{
-    backgroundImage: `url(${producthero})`,
-    height: "40vh",
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
-  }}
-  className="shop-hero h-[40vh]"
->
-  <div className="white h-full">
-    <div className="h-full text-center flex flex-col justify-center items-center">
-      <div className="h-[7vh] w-[7vw] flex justify-center items-center">
-        <img src={navlogo} alt="Furnios" className="w-[100%]" />
+      {/* ===== Hero Section ===== */}
+      <div
+        className="relative h-[45vh] bg-cover bg-center flex items-center justify-center"
+        style={{ backgroundImage: `url(${producthero})` }}
+      >
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
+        <div className="relative z-10 text-center text-white">
+          <div className="flex justify-center mb-3">
+            <img src={navlogo} alt="Funiro" className="w-16 h-16 rounded-full drop-shadow-lg" />
+          </div>
+          <h1 className="text-5xl font-bold tracking-wide drop-shadow-md">Contact Us</h1>
+          <p className="mt-3 text-gray-200 text-lg">
+            <Link to="/" className="hover:text-[#e0c869] transition-all duration-300">
+              Home
+            </Link>{" "}
+            / Contact
+          </p>
+        </div>
       </div>
-      <h1 className="font-semibold text-4xl md:text-5xl tracking-wider">Contact</h1>
-      <div className="my-4 px-4 text-lg md:text-xl">
-        <Link to={"/"} className="font-semibold">
-          {"Home > "}
-        </Link>
-        <Link to="/contact"> Contact</Link>
-      </div>
-    </div>
-  </div>
-</div>
 
-<div className="w-full text-center my-8">
-  <h1 className="text-3xl md:text-4xl font-bold mb-4">Get In Touch With Us</h1>
-  <p className="text-sm md:text-base">
-    For more information about our product & services, feel free to drop us <br />
-    an email. Our staff will always be there to help you out. Do not
-    hesitate.
-  </p>
-</div>
+      {/* ===== Contact Section ===== */}
+      <section className="container mx-auto px-5 py-20">
+        <div className="text-center mb-14">
+          <h2 className="text-4xl font-bold text-gray-800 mb-4">
+            Get In Touch With Us
+          </h2>
+          <p className="text-gray-600 text-lg">
+            We’d love to hear from you! Drop a message or reach us through our contact details below.
+          </p>
+        </div>
 
-<div className="contact-us-page flex flex-col md:flex-row justify-around px-4">
-  <div className="flex flex-col w-full md:w-1/3 mb-4">
-    <div className="flex mx-[5%]">
-      <div>
-        <LucideMapPin size={30} />
-      </div>
-      <div className="px-2 py-2">
-        <h1 className="font-bold text-xl md:text-2xl">Address</h1>
-        <p className="text-md w-full font-semibold">
-          House No.664C <br /> Sector 11-C Madina Colony <br /> Orangi Town
-          Karachi
-        </p>
-      </div>
-    </div>
+        <div className="flex flex-col lg:flex-row items-start gap-12">
+          {/* Left Contact Info */}
+          <div className="flex flex-col gap-6 w-full lg:w-1/3">
+            {[
+              {
+                icon: <LucideMapPin size={32} className="text-[#e0c869]" />,
+                title: "Address",
+                text: (
+                  <>
+                    House No.664C, Sector 11-C <br />
+                    Madina Colony, Orangi Town, Karachi
+                  </>
+                ),
+              },
+              {
+                icon: <PhoneFilled className="text-2xl text-[#e0c869]" />,
+                title: "Phone",
+                text: (
+                  <>
+                    Mobile: +92 465475847 <br />
+                    Hotline: +92 46547547
+                  </>
+                ),
+              },
+              {
+                icon: <ClockCircleFilled className="text-2xl text-[#e0c869]" />,
+                title: "Working Hours",
+                text: <>Mon – Fri: 9:00 AM – 10:00 PM</>,
+              },
+              {
+                icon: <MailOutlined className="text-2xl text-[#e0c869]" />,
+                title: "Email",
+                text: <>support@funiro.com</>,
+              },
+            ].map((info, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-4 p-5 bg-white rounded-2xl shadow-md hover:shadow-xl transition-transform duration-300 hover:-translate-y-1 border border-gray-100"
+              >
+                <div className="bg-[#e0c869]/20 p-3 rounded-full">{info.icon}</div>
+                <div>
+                  <h3 className="font-semibold text-xl text-gray-800">{info.title}</h3>
+                  <p className="text-gray-600 text-sm leading-6">{info.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
 
-    <div className="flex my-5 mx-[5%]">
-      <div>
-        <PhoneFilled className="text-2xl" />
-      </div>
-      <div className="px-2 py-2">
-        <h1 className="font-bold text-xl md:text-2xl">Phones</h1>
-        <p className="text-md font-semibold">(mobile) 92 465475847</p>
-        <p className="text-md font-semibold">(HotLine) 92 46547547</p>
-      </div>
-    </div>
+          {/* Right Form */}
+          <form
+            onSubmit={handleSubmit}
+            className="w-full lg:w-2/3 bg-white p-10 rounded-2xl shadow-lg border border-gray-100"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:border-[#e0c869] focus:ring-2 focus:ring-[#e0c869]/40 outline-none transition"
+                  placeholder="Your name"
+                />
+              </div>
 
-    <div className="flex mx-[5%]">
-      <div>
-        <ClockCircleFilled className="text-2xl" />
-      </div>
-      <div className="px-2 py-2">
-        <h1 className="font-bold text-xl md:text-2xl">Working Time</h1>
-        <p className="text-sm w-4/5 font-semibold">
-          Monday-Friday 09:00am - 10:00pm
-        </p>
-      </div>
-    </div>
-  </div>
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:border-[#e0c869] focus:ring-2 focus:ring-[#e0c869]/40 outline-none transition"
+                  placeholder="Your email"
+                />
+              </div>
+            </div>
 
-  <form className="contact-form w-full md:w-[50%]" onSubmit={handleSubmit}>
-    <div className="mb-4">
-      <label className="block text-gray-700">Name</label>
-      <input
-        type="text"
-        name="name"
-        value={formData.name}
-        onChange={handleInputChange}
-        required
-        className="w-full px-3 py-2 border rounded-md"
-        placeholder="Enter your name"
-      />
-    </div>
-    <div className="mb-4">
-      <label className="block text-gray-700">Email</label>
-      <input
-        type="email"
-        name="email"
-        value={formData.email}
-        onChange={handleInputChange}
-        required
-        className="w-full px-3 py-2 border rounded-md"
-        placeholder="Enter your email"
-      />
-    </div>
-    <div className="mb-4">
-      <label className="block text-gray-700">Subject</label>
-      <input
-        type="text"
-        name="subject"
-        value={formData.subject}
-        onChange={handleInputChange}
-        required
-        className="w-full px-3 py-2 border rounded-md"
-        placeholder="Enter your Subject"
-      />
-    </div>
-    <div className="mb-4">
-      <label className="block text-gray-700">Message</label>
-      <textarea
-        name="message"
-        value={formData.message}
-        onChange={handleInputChange}
-        required
-        className="w-full px-3 py-2 border rounded-md"
-        placeholder="Enter your message"
-        rows="5"
-      />
-    </div>
-    <Button
-      type="primary"
-      htmlType="submit"
-      style={{ background: "#e0c869" }}
-      loading={loading}
-      className="w-full py-2"
-    >
-      Send Message
-    </Button>
-  </form>
-</div>
+            <div className="mt-6">
+              <label className="block text-gray-700 font-semibold mb-2">Subject</label>
+              <input
+                type="text"
+                name="subject"
+                required
+                value={formData.subject}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:border-[#e0c869] focus:ring-2 focus:ring-[#e0c869]/40 outline-none transition"
+                placeholder="Subject"
+              />
+            </div>
 
-<style jsx>{`
-  @media (max-width: 640px) {
-    .contact-us-page {
-      flex-direction: column;
-      align-items: center;
-    }
-  }
-`}</style>
-  
+            <div className="mt-6">
+              <label className="block text-gray-700 font-semibold mb-2">Message</label>
+              <textarea
+                name="message"
+                required
+                rows="5"
+                value={formData.message}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:border-[#e0c869] focus:ring-2 focus:ring-[#e0c869]/40 outline-none transition"
+                placeholder="Write your message..."
+              />
+            </div>
+
+            <Button
+              htmlType="submit"
+              loading={loading}
+              className="mt-8 w-full py-3 text-lg font-semibold rounded-md transition-transform hover:scale-[1.02]"
+              style={{
+                background: "linear-gradient(135deg, #d4af37, #e0c869)",
+                border: "none",
+                color: "#fff",
+              }}
+            >
+              {loading ? "Sending..." : "Send Message"}
+            </Button>
+          </form>
+        </div>
+      </section>
+
+      {/* Optional Google Map */}
+      <div className="w-full h-[400px]">
+        <iframe
+          title="Location Map"
+          src="https://www.google.com/maps?q=Orangi%20Town%20Karachi&output=embed"
+          width="100%"
+          height="100%"
+          allowFullScreen=""
+          loading="lazy"
+          className="rounded-none border-none"
+        ></iframe>
+      </div>
+
       <Banner backColor={"#e0c869"} />
     </>
-  );  
-}
- export default Contact;
+  );
+};
+
+export default Contact;

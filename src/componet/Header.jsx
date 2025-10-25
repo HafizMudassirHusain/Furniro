@@ -1,218 +1,204 @@
-import { Avatar, Badge, Image, Modal, Button } from "antd";
-import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
 import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Avatar, Badge, Dropdown, Modal, Button } from "antd";
+import { Menu, X, ShoppingCart} from "lucide-react";
+import navlogo from "../assets/navLogo.png";
 import { CartContext } from "../context/CartContext";
-import { Menu, Search, ShoppingCart, User, X } from 'lucide-react';
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate for redirection
-import navlogo from '../assets/navLogo.png';
-import Carts from '../pages/Cart'; // Import Carts component
-import {auth, db, googleProvider,signInWithPopup, signOut } from '../pages/firebase'
 import { FirebaseContext } from "../context/FirebaseContext";
+import Carts from "../pages/Cart";
+import { auth, googleProvider, signInWithPopup, signOut } from "../pages/firebase";
 
 export default function Header() {
   const { cartItems } = useContext(CartContext);
+  const { user, setUser } = useContext(FirebaseContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCartModalOpen, setIsCartModalOpen] = useState(false); // State for cart modal
-  const navigate = useNavigate(); // For navigation
-  const { user, setUser } = useContext(FirebaseContext); 
-  
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const navigate = useNavigate();
 
-  // Handle Google sign-in
-  const handleGoogleLogin = () => {
-    signInWithPopup(auth, googleProvider)
-      .then((result) => {
-        const user = result.user;
-        setUser(user); // Set the user info
-        localStorage.setItem("user", JSON.stringify(user)); // Save user in localStorage for persistence
-      })
-      .catch((error) => {
-        console.error("Error signing in with Google: ", error.message);
-        alert("Failed to sign in with Google. Please try again.");
-      });
-  };
-
-  // Handle Logout
-  const handleLogout = () => {
-    signOut(auth)
-      .then(() => {
-        setUser(null); // Clear user info
-        localStorage.removeItem("user"); // Remove user from localStorage
-        navigate('/')
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  // Check if user is logged in on page load
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser)); // Retrieve user info from localStorage
-    }
+    if (storedUser) setUser(JSON.parse(storedUser));
+
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const loggedUser = result.user;
+      setUser(loggedUser);
+      localStorage.setItem("user", JSON.stringify(loggedUser));
+    } catch (error) {
+      alert("Login failed. Try again.");
+      console.error(error);
+    }
   };
 
-  const toggleCartModal = () => {
-    setIsCartModalOpen(!isCartModalOpen); // Toggle modal
+  const handleLogout = async () => {
+    await signOut(auth);
+    setUser(null);
+    localStorage.removeItem("user");
+    navigate("/");
   };
 
-  // Handle "Go to Cart" button click
-  const handleGoToCart = () => {
-    setIsCartModalOpen(false); // Close modal
-    navigate("/cart"); // Navigate to Cart.js route
-  };
+  const menuItems = [
+    { name: "Home", path: "/" },
+    { name: "Products", path: "/products" },
+    { name: "Orders", path: "/orders" },
+    { name: "Contact", path: "/contact" },
+  ];
 
-  // Handle "Comparison" button click
-  const handleComparison = () => {
-    // Add your comparison logic here
-    console.log("Comparison button clicked");
+  const userMenu = {
+    items: [
+      { key: "1", label: <Link to="/profile">Profile</Link> },
+      { key: "2", label: <span onClick={handleLogout}>Logout</span> },
+    ],
   };
 
   return (
-    <nav className="bg-white shadow-md">
+    <nav
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        isScrolled
+          ? "backdrop-blur-md bg-white/70 shadow-lg"
+          : "bg-white/90 backdrop-blur-sm"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link to={'/'} className="flex title-font text-2xl font-bold items-center text-gray-900 mb-4 md:mb-0">
-              <Image width={40} height={40} className="rounded-full" preview={false} src={navlogo} />
-              <span className="ml-3 text-xl">ECOM</span>
-            </Link>
-          </div>
+          <Link
+            to="/"
+            className="flex items-center space-x-2 text-xl font-semibold text-gray-800"
+          >
+            <img src={navlogo} alt="logo" className="w-10 h-10 rounded-full" />
+            <span className="font-bold tracking-wide">ECOM</span>
+          </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
-              <Link to={'/'} className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Home</Link>
-              <Link to={'/products'} className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Products</Link>
-              <Link to={'/orders'} className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Orders</Link>
-              <Link to={"/contact"} className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">Contact</Link>
-            </div>
+          <div className="hidden md:flex items-center space-x-6">
+            {menuItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className="text-gray-600 hover:text-gray-900 transition font-medium"
+              >
+                {item.name}
+              </Link>
+            ))}
           </div>
 
-       
-
-          {/* User and Cart Icons */}
-          <div className="hidden md:flex items-center">
+          {/* Right Section */}
+          <div className="hidden md:flex items-center space-x-4">
             {!user ? (
               <>
-              <User />
-                <Link to={"/auth/login"} className="m-1 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
-                  Login
-                </Link>
-                <button onClick={toggleCartModal} className="text-gray-600 hover:text-gray-900 p-2 ml-4 relative">
-                  <Badge count={cartItems.length}>
-                    <ShoppingCart className="h-6 w-6" style={{ fontSize: 30, color: "orange" }} />
-                  </Badge>
-                </button>
+                <Button
+                  onClick={handleGoogleLogin}
+                  className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-4 py-1 rounded-md hover:from-orange-500 hover:to-orange-600 transition"
+                >
+                  Sign in with Google
+                </Button>
               </>
             ) : (
-              <div className="flex items-center">
-                <button className="text-gray-600 hover:text-gray-900 p-2">
-                  <Avatar src={user.photoURL} />
-                  {/* <User className="h-6 w-6" /> */}
-                </button>
-                <button onClick={handleLogout} className="m-1 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
-                  Logout
-                </button>
-
-                {/* Cart button that opens modal */}
-                <button onClick={toggleCartModal} className="text-gray-600 hover:text-gray-900 p-2 ml-4 relative">
-                  <Badge count={cartItems.length}>
-                    <ShoppingCart className="h-6 w-6" style={{ fontSize: 30, color: "orange" }} />
-                  </Badge>
-                </button>
-              </div>
+              <Dropdown menu={userMenu} placement="bottomRight" arrow>
+                <Avatar
+                  src={user.photoURL}
+                  size="large"
+                  className="cursor-pointer border border-gray-300"
+                />
+              </Dropdown>
             )}
+
+            {/* Cart */}
+            <button
+              onClick={() => setIsCartModalOpen(true)}
+              className="relative text-gray-700 hover:text-orange-500 transition"
+            >
+              <Badge count={cartItems.length} size="small">
+                <ShoppingCart className="h-6 w-6" />
+              </Badge>
+            </button>
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile Menu Button */}
           <div className="md:hidden">
             <button
-              onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-2 text-gray-700 rounded-md hover:bg-gray-100"
             >
-              {isMenuOpen ? (
-                <X className="h-6 w-6" aria-hidden="true" />
-              ) : (
-                <Menu className="h-6 w-6" aria-hidden="true" />
-              )}
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link to={'/'} className="text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">Home</Link>
-            <Link to={'/products'} className="text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">Products</Link>
-            <Link to={'/orders'} className="text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">Orders</Link>
-            <Link to={"/contact"} className="text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium">Contact</Link>
-          </div>
-          <div className="px-4 py-3">
-            {!user ? (
-              <div className=" flex items-center justify-between">
-                <div className="flex items-center">
-                <User className="mt-2"/>
-              <button onClick={handleGoogleLogin} className="m-1 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
-                Continue with Google
-              </button>
-                </div>
-                <div>
-                <button onClick={toggleCartModal} className="text-gray-600 hover:text-gray-900 p-2 ml-4 relative">
-                <Badge count={cartItems.length}>
-                  <ShoppingCart className="h-6 w-6" style={{ fontSize: 30, color: "orange" }} />
-                </Badge>
-              </button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex justify-around items-center">
-              <button className="text-gray-600 hover:text-gray-900 p-2">
-              <Avatar src={user.photoURL} />
-                {/* <User className="h-6 w-6" /> */}
-              </button>
-              <button onClick={handleLogout} className="m-1 inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
-                Logout
-              </button>
+      {/* Mobile Drawer */}
+      <div
+        className={`fixed top-16 left-0 w-full bg-white/95 backdrop-blur-md shadow-md transform transition-all duration-300 ${
+          isMenuOpen ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+        } md:hidden`}
+      >
+        <div className="flex flex-col px-6 py-4 space-y-3">
+          {menuItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className="text-gray-700 font-medium hover:text-orange-500 transition"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {item.name}
+            </Link>
+          ))}
 
-              {/* Cart button that opens modal */}
-              <button onClick={toggleCartModal} className="text-gray-600 hover:text-gray-900 p-2 ml-4 relative">
-                <Badge count={cartItems.length}>
-                  <ShoppingCart className="h-6 w-6" style={{ fontSize: 30, color: "orange" }} />
-                </Badge>
-              </button>
-            </div>
+          <div className="pt-4 border-t border-gray-200 flex items-center justify-between">
+            {!user ? (
+              <Button
+                onClick={handleGoogleLogin}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-md"
+              >
+                Continue with Google
+              </Button>
+            ) : (
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-2">
+                  <Avatar src={user.photoURL} />
+                  <span className="text-gray-700 font-medium">
+                    {user.displayName}
+                  </span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="text-sm text-red-500 hover:underline"
+                >
+                  Logout
+                </button>
+              </div>
             )}
           </div>
         </div>
-      )}
+      </div>
 
       {/* Cart Modal */}
-      <Modal 
-        title="Your Cart"
+      <Modal
+        title="🛒 Your Cart"
         open={isCartModalOpen}
-        onOk={toggleCartModal}
-        onCancel={toggleCartModal}
-        footer={(
-          <>
-            <Button type="primary" onClick={handleGoToCart}>
-              Go to Cart
-            </Button>
-            <Button type="default" onClick={handleComparison}>
-              Comparison
-            </Button>
-          </>
-        )}
-        width={800}
+        onCancel={() => setIsCartModalOpen(false)}
+        footer={[
+          <Button key="cart" type="primary" onClick={() => navigate("/cart")}>
+            Go to Cart
+          </Button>,
+          <Button key="close" onClick={() => setIsCartModalOpen(false)}>
+            Close
+          </Button>,
+        ]}
+        width={750}
+        className="rounded-xl"
       >
-        <Carts isModal={true} />
+        <div className="max-h-[60vh] overflow-y-auto rounded-lg bg-gray-50 p-3">
+          <Carts isModal={true} />
+        </div>
       </Modal>
     </nav>
   );

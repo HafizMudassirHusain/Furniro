@@ -1,119 +1,149 @@
 import { useEffect, useState } from "react";
-import ProductCard from "../componet/ProductCard";
 import { Link } from "react-router-dom";
-import { Button, Pagination, Row , Select, Spin} from "antd";
-import producthero from '../assets/producthero1.1.jpg';
-import '../componet/ProductsComponent/ProductCom.css'
-import Banner from "../componet/ProductsComponent/Banner";
-import navlogo from '../assets/navLogo.png';
+import { Button, Pagination, Row, Select, Spin } from "antd";
 import { Search } from "lucide-react";
+import ProductCard from "../componet/ProductCard";
+import producthero from "../assets/producthero1.1.jpg";
+import navlogo from "../assets/navLogo.png";
+import Banner from "../componet/ProductsComponent/Banner";
+import "../componet/ProductsComponent/ProductCom.css";
 
-function Product(){
-    const [product, setProducts] = useState([]);
-    const [search, setsearch] = useState("");
-    const [category, setCategory] = useState([]);
-    const [skip, setskip] = useState(0);
-    const [specificItem, setspecificItem] = useState("");
-    const [limit, setlimit] = useState(20);
-    const [total, setTotal] = useState(20);
-    const [isLoding, setisLoding] = useState(false);
-   console.log(isLoding)
-    useEffect(()=>{
-      fetch('https://dummyjson.com/products/categories')
-         .then(res => res.json())
-         .then(res => setCategory(res));
-    },[])
-   
-useEffect(()=>{
+function Product() {
+  const [product, setProducts] = useState([]);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState([]);
+  const [skip, setSkip] = useState(0);
+  const [specificItem, setSpecificItem] = useState("");
+  const [total, setTotal] = useState(20);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("https://dummyjson.com/products/categories")
+      .then((res) => res.json())
+      .then((res) => setCategory(res));
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
     fetch(`https://dummyjson.com/products?limit=20&skip=${skip}`)
-    .then(res => res.json())
-     .then(res =>{ 
-  setProducts(res.products);
-  setTotal(res.total);
-  setisLoding(true);
-});
-},[skip]);
+      .then((res) => res.json())
+      .then((res) => {
+        setProducts(res.products);
+        setTotal(res.total);
+        setTimeout(() => setLoading(false), 600); // smooth transition
+      });
+  }, [skip]);
 
-    const filtered = product.filter((data)=> 
-    data.title.toLowerCase().includes(search.toLowerCase()) &&
-    (specificItem.toLowerCase() == "" || 
-    data.category.toLowerCase().includes(specificItem.toLowerCase()))
-    )
+  const filtered = product.filter(
+    (data) =>
+      data.title.toLowerCase().includes(search.toLowerCase()) &&
+      (specificItem === "" ||
+        data.category.toLowerCase().includes(specificItem.toLowerCase()))
+  );
 
-    return(
-      <>
-        <div style={{backgroundImage:
-        `url(${producthero})`,
-         height: "50vh",
-        //  objectFit:"cover",
-        //  marginTop:"-100px",
-         backgroundSize: "cover",
-         backgroundRepeat: "no-repeat",}}
-         className="shop-hero h-[40vh] ">
-          <div className="white h-full ">
-           <div className="h-full text-center flex flex-col justify-center items-center">
-           <div className='h-[7vh] w-[7vw] flex justify-center items-center'>
-           <img src={navlogo} alt="Furnios" className='w-[100%]' /></div>
-            <h1 className="font-semibold text-5xl">Shop</h1>
-            <div className="my-4 px-4 text-xl">
-            <Link to={'/'} className="font-semibold">{"Home > "}</Link> <Link> Shop</Link>
-            </div>
-           </div>
+  return (
+    <>
+      {/* Hero Section */}
+      <div
+        style={{
+          backgroundImage: `url(${producthero})`,
+          height: "50vh",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+        className="relative flex items-center justify-center text-white text-center"
+      >
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="relative z-10">
+          <div className="flex justify-center mb-4">
+            <img src={navlogo} alt="Furnios" className="w-[80px]" />
           </div>
-         </div>
-         
-        <div className="container p-5 m-auto ">
-        <div className="container mx-auto w-[80vw] flex justify-around items-center my-10 h-16">
-
-        <div className=" md:block flex-1 max-w-md mx-4">
-            <div className="relative">
-              <input
-                type="text"
-                onChange={(e)=> setsearch(e.target.value)}
-                placeholder="Search products..."
-                className="w-full bg-gray-100 rounded-md py-2 px-4 pl-10 
-                focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <Search className="absolute left-3 top-2.5 h-5 w-5  text-gray-400 bg-none" />
-            </div>
+          <h1 className="text-5xl font-bold drop-shadow-md">Shop</h1>
+          <div className="mt-3 text-lg">
+            <Link to="/" className="font-medium text-yellow-400 hover:underline">
+              Home
+            </Link>{" "}
+            <span className="mx-1 text-gray-200">{">"}</span>
+            <span className="text-gray-100">Shop</span>
           </div>
-
-         
-        <Select showSearch placeholder="Select Category" optionFilterProp="label"
-            className="options w-1/3 h-10 "
-            onChange={(e)=> setspecificItem(e)}
-              // onSearch={onSearch}
-              filterOption={(input, option) =>
-                (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-                    }
-              options={category.map((data)=>{
-                 return {label: data.name, value : data.slug};
-                })} />
-
-        <Button className="p-4">Search</Button>
-      
         </div>
-  
-        <Row gutter={16} >
-          {!isLoding ? <Spin size="large" fullscreen={true} percent={"auto"}  />
-            :
-          filtered.map((data) => (
-            <ProductCard key={data.id} item={data} />
-          ))
-          }
-        </Row>
-        <div className="m-4 flex justify-center items-center">
-        <Pagination className="mt-8"
-          onChange={(num)=>{
-             setskip((num - 1) * 20)
-          }}
-      defaultCurrent={1}
-      pageSize={20}
-      total={total} />
-        </div>
-        <Banner backColor={"#f5d776"} />
       </div>
-      </>
-    )
-   }
-   export default Product;
+
+      {/* Filters Section */}
+      <div className="w-[90%] lg:w-[80%] mx-auto mt-10 mb-6 sticky top-0 z-40 bg-white/70 backdrop-blur-md rounded-xl p-5 shadow-sm border border-gray-100">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          {/* Search Bar */}
+          <div className="relative w-full md:w-1/2">
+            <input
+              type="text"
+              placeholder="Search for products..."
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-gray-100 rounded-full py-2.5 pl-10 pr-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 shadow-sm"
+            />
+            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+          </div>
+
+          {/* Category Filter */}
+          <Select
+            showSearch
+            placeholder="Select category"
+            optionFilterProp="label"
+            className="w-full md:w-1/4 h-10 rounded-full"
+            onChange={(e) => setSpecificItem(e)}
+            filterOption={(input, option) =>
+              (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+            }
+            options={category.map((data) => ({
+              label: data.name || data,
+              value: data.slug || data,
+            }))}
+          />
+
+          {/* Filter Button */}
+          <Button
+            type="primary"
+            className="bg-yellow-500 hover:bg-yellow-600 border-none px-8 py-2 rounded-full text-white font-semibold transition-all shadow-sm"
+          >
+            Filter
+          </Button>
+        </div>
+      </div>
+
+      {/* Product Grid */}
+      <div className="w-[90%] lg:w-[80%] mx-auto min-h-[60vh]">
+        {loading ? (
+          <div className="flex justify-center items-center h-[50vh]">
+            <Spin size="large" />
+          </div>
+        ) : filtered.length > 0 ? (
+          <Row gutter={[24, 24]}>
+            {filtered.map((data) => (
+              <ProductCard key={data.id} item={data} />
+            ))}
+          </Row>
+        ) : (
+          <div className="text-center py-16 text-gray-500 text-lg">
+            No products found.
+          </div>
+        )}
+
+        {/* Pagination */}
+        <div className="flex justify-center mt-10">
+          <Pagination
+            onChange={(num) => setSkip((num - 1) * 20)}
+            defaultCurrent={1}
+            pageSize={20}
+            total={total}
+            showSizeChanger={false}
+          />
+        </div>
+      </div>
+
+      {/* Bottom Banner */}
+      <Banner backColor={"#f5d776"} />
+    </>
+  );
+}
+
+export default Product;

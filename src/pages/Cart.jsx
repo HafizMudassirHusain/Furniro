@@ -1,127 +1,175 @@
 import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
 import { Button, Image } from "antd";
-import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  PlusOutlined,
+  MinusOutlined,
+} from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 import Banner from "../componet/ProductsComponent/Banner";
-import producthero from '../assets/producthero1.1.jpg';
-import navlogo from '../assets/navLogo.png';
+import producthero from "../assets/producthero1.1.jpg";
+import navlogo from "../assets/navLogo.png";
 
 function Carts() {
   const { cartItems, updateToCart, removeCart } = useContext(CartContext);
   const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cartItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
-  
+  const totalPrice = cartItems.reduce(
+    (sum, item) => sum + item.quantity * item.price,
+    0
+  );
+
   const navigate = useNavigate();
   const goToCheckout = () => navigate("/checkout");
 
   return (
     <>
+      {/* 🌟 Hero Section */}
       <div
-        style={{
-          backgroundImage: `url(${producthero})`,
-          height: "50vh",
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-        }}
-        className="shop-hero h-[40vh]"
+        className="relative h-[40vh] flex flex-col justify-center items-center bg-cover bg-center"
+        style={{ backgroundImage: `url(${producthero})` }}
       >
-        <div className="white h-full">
-          <div className="h-full text-center flex flex-col justify-center items-center">
-            <div className='h-[7vh] w-[7vw] flex justify-center items-center'>
-              <img src={navlogo} alt="Furnios" className='w-[100%]' />
-            </div>
-            <h1 className="font-semibold text-5xl tracking-wider">Cart</h1>
-            <div className="my-4 px-4 text-xl">
-              <Link to={'/'} className="font-semibold">{"Home > "}</Link> <Link> Cart</Link>
-            </div>
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="relative text-center text-white z-10">
+          <img
+            src={navlogo}
+            alt="Logo"
+            className="mx-auto mb-3 w-20 sm:w-24 drop-shadow-lg"
+          />
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-wide mb-2">
+            Your Cart
+          </h1>
+          <div className="text-lg sm:text-xl text-[#d4af37]">
+            <Link to="/" className="hover:text-white transition">
+              Home
+            </Link>{" "}
+            &gt; Cart
           </div>
         </div>
       </div>
 
+      {/* 🌟 Cart Content */}
       <div className="container mx-auto p-5 md:p-10">
-  <div className="flex flex-col lg:flex-row">
-    <div className="flex flex-col w-full lg:w-[70vw]">
-      {cartItems.length > 0 ? (
-        <div className="flex items-center p-4 m-1 overflow-x-auto">
-          <table className="w-full text-center">
-            <thead className="h-[7vh]" style={{ background: "#faf1d4" }}>
-              <tr>
-                <th></th>
-                <th className="w-[30%] sm:w-[20%]">Product</th>
-                <th className="w-[20%]">Price</th>
-                <th className="w-[15%]">Quantity</th>
-                <th className="w-[20%]">Subtotal</th>
-                <th className="w-[15%]">Options</th>
-              </tr>
-            </thead>
-            {cartItems.map((data) => (
-              <tbody key={data.id}>
-                <tr>
-                  <td>
-                    <Image src={data.thumbnail} height={100} width={100} />
-                  </td>
-                  <td>
-                    <h1 className="text-blue-300">{data.title}</h1>
-                  </td>
-                  <td>
-                    <h1>${data.price}</h1>
-                  </td>
-                  <td>
-                    <Button>{data.quantity}</Button>
-                  </td>
-                  <td>
-                    <h1 className="text-2xl font-semibold">${Math.floor(data.quantity * data.price)}</h1>
-                  </td>
-                  <td>
-                    <Button onClick={() => updateToCart(data.id, "plus")}>Plus</Button>
-                    <Button onClick={() => data.quantity <= 1 ? removeCart(data.id) : updateToCart(data.id, "minus")}>
-                      {data.quantity <= 1 ? <CloseCircleOutlined /> : "Minus"}
-                    </Button>
-                  </td>
-                </tr>
-              </tbody>
-            ))}
-          </table>
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* 🛒 Cart Table */}
+          <div className="flex-1 bg-white rounded-2xl shadow-lg p-4 sm:p-6 border border-[#f7e7b3]">
+            {cartItems.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-center border-collapse">
+                  <thead className="bg-[#fff9e5] text-[#444] border-b border-[#f4e1a1]">
+                    <tr>
+                      <th className="p-3 text-sm sm:text-base">Image</th>
+                      <th className="p-3 text-sm sm:text-base text-left">
+                        Product
+                      </th>
+                      <th className="p-3 text-sm sm:text-base">Price</th>
+                      <th className="p-3 text-sm sm:text-base">Quantity</th>
+                      <th className="p-3 text-sm sm:text-base">Subtotal</th>
+                      <th className="p-3 text-sm sm:text-base">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cartItems.map((data) => (
+                      <tr
+                        key={data.id}
+                        className="hover:bg-[#fff6da] transition border-b border-[#f9efc8]"
+                      >
+                        <td className="p-3">
+                          <Image
+                            src={data.thumbnail}
+                            alt={data.title}
+                            width={90}
+                            height={90}
+                            className="rounded-md shadow-sm"
+                          />
+                        </td>
+                        <td className="p-3 text-left font-medium text-gray-700">
+                          {data.title}
+                        </td>
+                        <td className="p-3 text-[#d4af37] font-semibold">
+                          Rs. {data.price}
+                        </td>
+                        <td className="p-3">
+                          <div className="flex justify-center items-center gap-2">
+                            <Button
+                              icon={<MinusOutlined />}
+                              onClick={() =>
+                                data.quantity <= 1
+                                  ? removeCart(data.id)
+                                  : updateToCart(data.id, "minus")
+                              }
+                              className="!border-[#d4af37] hover:!bg-[#d4af37] hover:!text-white"
+                            />
+                            <span className="px-3 font-semibold">
+                              {data.quantity}
+                            </span>
+                            <Button
+                              icon={<PlusOutlined />}
+                              onClick={() => updateToCart(data.id, "plus")}
+                              className="!border-[#d4af37] hover:!bg-[#d4af37] hover:!text-white"
+                            />
+                          </div>
+                        </td>
+                        <td className="p-3 font-semibold text-gray-800">
+                          Rs. {Math.floor(data.quantity * data.price)}
+                        </td>
+                        <td className="p-3">
+                          <Button
+                            danger
+                            type="primary"
+                            icon={<CloseCircleOutlined />}
+                            onClick={() => removeCart(data.id)}
+                            className="hover:!bg-red-600"
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <p className="text-xl font-semibold text-gray-600">
+                  Your cart is empty 🛍️
+                </p>
+                <Link to="/" className="text-[#d4af37] hover:underline mt-2 inline-block">
+                  Continue Shopping
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* 💰 Total Summary Box */}
+          <div className="w-full lg:w-[30%] bg-white shadow-lg rounded-2xl border border-[#f7e7b3] p-6 flex flex-col justify-between">
+            <h1 className="text-2xl font-bold mb-4 text-[#d4af37] border-b border-[#f1dca7] pb-2 text-center">
+              Cart Summary
+            </h1>
+            <div className="flex justify-between text-gray-700 mb-3">
+              <span>Total Items:</span>
+              <span className="font-semibold">{totalQuantity}</span>
+            </div>
+            <div className="flex justify-between text-gray-700 mb-6">
+              <span>Total Price:</span>
+              <span className="font-semibold text-[#d4af37] text-lg">
+                Rs. {Math.floor(totalPrice)}
+              </span>
+            </div>
+            <Button
+              type="default"
+              icon={<CheckCircleOutlined />}
+              onClick={goToCheckout}
+              className="!bg-[#d4af37] !text-white hover:!bg-[#c19f2c] transition-all rounded-full py-5 text-lg font-semibold"
+            >
+              Proceed to Checkout
+            </Button>
+          </div>
         </div>
-      ) : (
-        <p className="text-center text-xl">Your cart is empty</p>
-      )}
-    </div>
 
-    {/* Total Cart Section */}
-    <div className="totalCart flex flex-col m-5 text-center w-full lg:w-[30vw] h-auto lg:h-[35vh]" style={{ background: "#faf1d4" }}>
-      <h1 className="text-2xl font-bold mt-5 mb-5">Total Cart</h1>
-      <div className="flex-grow flex justify-center items-center">
-        <h1 className="text-md mx-5">Total Items</h1>
-        <h1 className="text-md font-bold text-gray-300">{totalQuantity}</h1>
-      </div>
-      <div className="flex-grow flex justify-center items-center">
-        <h1 className="text-md mx-5">Total</h1>
-        <h1 className="text-xl font-bold" style={{ color: "#edc43e" }}>${Math.floor(totalPrice)}</h1>
-      </div>
-      <div className="flex-grow flex justify-center mb-5 items-center">
-        <Button className="p-5 border border-black" onClick={goToCheckout} icon={<CheckCircleOutlined />}>
-          Proceed to Checkout
-        </Button>
-      </div>
-    </div>
-  </div>
- 
-<style jsx>{`
-  @media (max-width: 640px) {
-    .totalCart {
-    width:90%;
-      flex-direction: column;
-      margin: 0 auto;
-      align-items: center;
-    }
-  }
-`}</style>
-
-
-
-        <Banner backColor={"#faf1d4"} />
+        {/* 🖼 Banner */}
+        <div className="mt-10">
+          <Banner backColor={"#fff9e5"} />
+        </div>
       </div>
     </>
   );

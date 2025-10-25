@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { db } from './firebase'; // Firebase config
-import { Link, useParams } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
-import { Button, Image, message, Spin } from 'antd';
-import producthero from '../assets/producthero1.1.jpg';
-import navlogo from '../assets/navLogo.png';  
+import { useEffect, useState } from "react";
+import { db } from "./firebase";
+import { Link, useParams } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { Button, Image, message, Spin } from "antd";
+import producthero from "../assets/producthero1.1.jpg";
+import navlogo from "../assets/navLogo.png";
 
 const OrderDetails = () => {
-  const { orderId } = useParams(); // Get the order ID from URL params
+  const { orderId } = useParams();
   const [orderDetails, setOrderDetails] = useState(null);
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
       try {
-        const docRef = doc(db, 'orders', orderId);
+        const docRef = doc(db, "orders", orderId);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
@@ -25,102 +25,164 @@ const OrderDetails = () => {
         message.error("Failed to fetch order details: " + error.message);
       }
     };
-
     fetchOrderDetails();
   }, [orderId]);
 
-  console.log(orderId) 
-
   return (
-
-<>
-
-<div
-    style={{
-      backgroundImage: `url(${producthero})`,
-      height: "50vh",
-      backgroundSize: "cover",
-      backgroundRepeat: "no-repeat",
-    }}
-    className="shop-hero h-[40vh]"
-  >
-    <div className="white h-full">
-      <div className="h-full text-center flex flex-col justify-center items-center">
-        <div className="h-[7vh] w-[7vw] flex justify-center items-center">
-          <img src={navlogo} alt="Furnios" className="w-[100%]" />
-        </div>
-        <h1 className="font-semibold text-5xl">Orders</h1>
-        <div className="my-4 px-4 text-xl">
-          <Link to={'/'} className="font-semibold">{"Home > "}</Link>
-          <Link> orders</Link>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-<div className="order-details-page w-[90%] m-auto my-5">
-  {orderDetails ? (
-    <div className="order-details p-4 sm:p-6 lg:p-8 bg-white rounded-md">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4">Order Details</h1>
-      <p className="mb-2 text-left text-sm sm:text-base">Order ID: <span className="font-semibold">{orderId}</span></p>
-      <p className="mb-2 text-sm text-left sm:text-base">Customer Name: <span className="font-semibold">{orderDetails.name}</span></p>
-      <p className="mb-2 text-sm text-left sm:text-base">Email: <span className="font-semibold">{orderDetails.email}</span></p>
-      <p className="mb-2 text-sm text-left sm:text-base">Phone: <span className="font-semibold">{orderDetails.number}</span></p>
-      <p className="mb-2 text-sm text-left sm:text-base">Address: <span className="font-semibold">{orderDetails.address}</span></p>
-      <p className="mb-2 text-sm text-left sm:text-base">Total Items: <span className="font-semibold">{orderDetails.totalQuantity}</span></p>
-      <p className="mb-2 text-sm text-left sm:text-base">Total Price: <span className="font-semibold">Rs. {orderDetails.totalPrice}</span></p>
-      <p className="mb-2 text-sm text-left sm:text-base">Order Status: <span className="font-semibold">{orderDetails.Status}</span></p>
-      <h3 className="mt-4 text-lg sm:text-xl font-semibold">Items Purchased:</h3>
-      
-      <div className="overflow-x-auto">
-        <table className="w-full text-center">
-          <thead className="h-[7vh]" style={{ background: "#faf1d4" }}>
-            <tr>
-              <th className="text-sm sm:text-base">Product Image</th>
-              <th className="w-[30%] text-sm sm:text-base">Product Name</th>
-              <th className="text-sm sm:text-base">Price</th>
-              <th className="text-sm sm:text-base">Quantity</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orderDetails.items.map((item, index) => (
-              <tr key={index}>
-                <td>
-                  <Image src={item.image} height={100} width={100} />
-                </td>
-                <td>
-                  <h1 className="text-blue-300 text-sm sm:text-base">{item.title}</h1>
-                </td>
-                <td>
-                  <h1 className="text-sm sm:text-base">Rs. {item.price}</h1>
-                </td>
-                <td>
-                  <Button className="text-sm sm:text-base">Quantity: {item.quantity}</Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <Button
-        className="mt-4 w-full sm:w-auto p-2 sm:p-4"
-        onClick={() => window.history.back()}
-        type="primary"
+    <>
+      {/* 🌟 Hero Section */}
+      <div
+        className="relative h-[40vh] flex flex-col justify-center items-center bg-cover bg-center"
+        style={{ backgroundImage: `url(${producthero})` }}
       >
-        Back to Orders
-      </Button>
-    </div>
-  ) : (
-    <Spin size="large" fullscreen={true} />
-  )}
-</div>
-</>
+        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="relative text-center text-white z-10">
+          <img
+            src={navlogo}
+            alt="Logo"
+            className="mx-auto mb-3 w-20 sm:w-24 drop-shadow-lg"
+          />
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-wide mb-2">
+            Order Details
+          </h1>
+          <div className="text-lg sm:text-xl text-[#d4af37]">
+            <Link to="/" className="hover:text-white transition">
+              Home
+            </Link>{" "}
+            &gt; Order
+          </div>
+        </div>
+      </div>
 
+      {/* 🌟 Order Details Section */}
+      <div className="max-w-5xl mx-auto my-10 px-4 sm:px-6">
+        {orderDetails ? (
+          <div className="bg-white shadow-xl rounded-2xl p-6 sm:p-10 border border-[#f6e8b1]">
+            {/* Header Info */}
+            <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-[#d4af37] border-b border-[#f1dca7] pb-2">
+              Order Summary
+            </h1>
 
-  
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 text-gray-800">
+              <p>
+                <span className="font-semibold">Order ID:</span> {orderId}
+              </p>
+              <p>
+                <span className="font-semibold">Customer Name:</span>{" "}
+                {orderDetails.name}
+              </p>
+              <p>
+                <span className="font-semibold">Email:</span>{" "}
+                {orderDetails.email}
+              </p>
+              <p>
+                <span className="font-semibold">Phone:</span>{" "}
+                {orderDetails.number}
+              </p>
+              <p className="sm:col-span-2">
+                <span className="font-semibold">Address:</span>{" "}
+                {orderDetails.address}
+              </p>
+              <p>
+                <span className="font-semibold">Total Items:</span>{" "}
+                {orderDetails.totalQuantity}
+              </p>
+              <p>
+                <span className="font-semibold">Total Price:</span>{" "}
+                <span className="text-[#d4af37] font-semibold">
+                  Rs. {orderDetails.totalPrice}
+                </span>
+              </p>
+              <p className="sm:col-span-2">
+                <span className="font-semibold">Order Status:</span>{" "}
+                <span
+                  className={`font-bold ${
+                    orderDetails.Status?.toLowerCase() === "delivered"
+                      ? "text-green-600"
+                      : orderDetails.Status?.toLowerCase() === "pending"
+                      ? "text-yellow-500"
+                      : "text-red-500"
+                  }`}
+                >
+                  {orderDetails.Status}
+                </span>
+              </p>
+            </div>
 
+            {/* Items Table */}
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-[#d4af37]">
+              Purchased Items
+            </h2>
+
+            <div className="overflow-x-auto">
+              <table className="min-w-full border border-[#f4e1a1] rounded-lg overflow-hidden">
+                <thead className="bg-[#fff9e5] text-[#444]">
+                  <tr>
+                    <th className="p-3 text-sm sm:text-base font-semibold text-left">
+                      Image
+                    </th>
+                    <th className="p-3 text-sm sm:text-base font-semibold text-left">
+                      Product Name
+                    </th>
+                    <th className="p-3 text-sm sm:text-base font-semibold text-center">
+                      Price
+                    </th>
+                    <th className="p-3 text-sm sm:text-base font-semibold text-center">
+                      Quantity
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orderDetails.items.map((item, index) => (
+                    <tr
+                      key={index}
+                      className="hover:bg-[#fff6da] transition border-b border-[#f9efc8]"
+                    >
+                      <td className="p-3">
+                        <Image
+                          src={item.image}
+                          alt={item.title}
+                          width={90}
+                          height={90}
+                          className="rounded-lg shadow-sm"
+                        />
+                      </td>
+                      <td className="p-3 text-[#555] font-medium">
+                        {item.title}
+                      </td>
+                      <td className="p-3 text-center text-[#d4af37] font-semibold">
+                        Rs. {item.price}
+                      </td>
+                      <td className="p-3 text-center">
+                        <span className="inline-block bg-[#f9f1cb] text-[#333] px-3 py-1 rounded-full text-sm font-semibold">
+                          {item.quantity}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Back Button */}
+            <div className="text-center mt-8">
+              <Button
+                type="default"
+                size="large"
+                onClick={() => window.history.back()}
+                className="!bg-[#d4af37] !text-white hover:!bg-[#c19f2c] transition-all rounded-full px-6"
+              >
+                Back to Orders
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex justify-center items-center h-[50vh]">
+            <Spin size="large" />
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

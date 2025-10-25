@@ -12,6 +12,15 @@
   backdrop-filter: blur(10px); /* Optional for a glass effect */
 }
 
+
+
+.shadow-md {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+.shadow-xl {
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+}
+
 /* ================Sliders=============== */
 
 .slider-container {
