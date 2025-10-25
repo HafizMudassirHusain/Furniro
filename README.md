@@ -1,7 +1,15 @@
 ## 🛍️ **Project Name — Modern E-Commerce Web App**
 
-A **full-featured e-commerce web application** built with **React + Firebase + Tailwind CSS**, offering a smooth shopping experience, secure authentication, order tracking, and an elegant golden-themed UI.
-Designed for scalability, modern UI, and seamless user interaction.
+![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-FFCA28?logo=firebase&logoColor=black)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4?logo=tailwindcss&logoColor=white)
+![AntDesign](https://img.shields.io/badge/AntDesign-0170FE?logo=antdesign&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
+A **premium-style e-commerce web app** built with **React + Firebase + Tailwind CSS**, designed for elegance, performance, and scalability.  
+Enjoy a seamless shopping experience with secure authentication, admin control, and a sleek **gold-themed UI**.
+
 
 ---
 
